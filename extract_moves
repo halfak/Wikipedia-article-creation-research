@@ -1,0 +1,2 @@
+#!/bin/sh
+python -tt -c "from ac import extract_moves; extract_moves.main();" "$@"

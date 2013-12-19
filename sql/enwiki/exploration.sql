@@ -1,61 +1,67 @@
 SELECT
-    DATABASE() as wiki,
     page_id,
     page_namespace,
     page_title,
-    revisions,
-    first_revision,
-    last_revision,
-    archived,
-    (
-        archived AND 
-        (
-            UNIX_TIMESTAMP(last_revision) - 
-            UNIX_TIMESTAMP(first_revision)
-        ) < 60*60*24*30 
-    ) AS archived_quickly,
-    IFNULL(rev_creation.rev_id, arc_creation.ar_rev_id) AS creating_rev_id,
-    IFNULL(rev_creation.rev_timestamp, arc_creation.ar_timestamp) AS creating_rev_timestamp,
-    user_id AS creator_id,
-    IFNULL(creator.user_name, IFNULL(rev_creation.rev_user_text, arc_creation.ar_user_text)) AS creator_name,
-    IFNULL(direct_create.log_action, indirect_create.log_action) AS creator_creation_action,
-    user_registration AS creator_registration
-FROM (
-    (SELECT
-        ar_page_id AS page_id,
-        ar_namespace AS page_namespace,
-        ar_title AS page_title,
-        COUNT(*) AS revisions,
-        MIN(ar_timestamp) AS first_revision,
-        MAX(ar_timestamp) AS last_revision,
-        True AS archived,
-        MIN(ar_rev_id) AS first_rev_id
-    FROM archive
-    WHERE ar_timestamp BETWEEN "20131105000000" AND "20131105010000"
-    GROUP BY 1,2,3)
-    UNION
-    (SELECT
-        page_id,
-        page_namespace,
-        page_title,
-        COUNT(*) AS revisions,
-        MIN(rev_timestamp) AS first_edit,
-        MAX(rev_timestamp) AS last_edit,
-        False AS archived,
-        MIN(rev_id) AS first_rev_id
-    FROM revision
-    INNER JOIN page ON page_id = rev_page
-    WHERE rev_timestamp BETWEEN "20131105000000" AND "20131105010000"
-    GROUP BY 1,2,3)
-) as page
-LEFT JOIN revision rev_creation ON rev_id = first_rev_id
-LEFT JOIN archive arc_creation ON ar_rev_id = first_rev_id
-LEFT JOIN user creator ON IFNULL(rev_creation.rev_user, arc_creation.ar_user) = user_id
-LEFT JOIN logging AS direct_create ON
-    direct_create.log_type = "newusers" AND
-    creator.user_id = direct_create.log_user AND
-    direct_create.log_action IN ("create", "autocreate", "newusers")
-LEFT JOIN logging AS indirect_create ON
-    indirect_create.log_type = "newusers" AND
-    indirect_create.log_action IN ("byemail", "create2") AND
-    REPLACE(creator.user_name, " ", "_") = indirect_create.log_title;
+    original_namespace,
+    original_title,
+    first_revision as created,
+    IF(original_namespace = 0, first_revision, publish.timestamp) AS published,
+    IF(archived OR unpublish.page_id IS NOT NULL, 
+        IF(
+            archived, 
+            IF(unpublish.timestamp < last_revision, unpublish.timestamp, last_revision),
+            unpublish.timestamp
+        ),
+        NULL
+    ) AS unpublished
+FROM halfak.nov13_page page
+INNER JOIN halfak.nov13_page_origin origin USING (page_id, page_namespace, page_title)
+LEFT JOIN halfak.publish USING (page_id, page_namespace, page_title)
+LEFT JOIN halfak.unpublish USING (page_id, page_namespace, page_title)
+WHERE
+    (original_namespace = 0 OR
+    publish.page_id IS NOT NULL) AND
+    page.page_id IS NULL AND 
+    page.page_title = "!!!!" AND
+    page.page_namespace = 0;
+
+SELECT
+    o.page_id, 
+    o.page_namespace, 
+    o.page_title 
+FROM nov13_page_origin o
+LEFT JOIN nov13_article_page ap USING (page_id, page_namespace, page_title)
+WHERE ap.page_id IS NULL
+AND o.original_namespace = 0
+LIMIT 10;
+/*
++---------+----------------+--------------------------------------------------------------------------------------------------------------
+---------------------------+
+| page_id | page_namespace | page_title                                                                                                   
+                           |
++---------+----------------+--------------------------------------------------------------------------------------------------------------
+---------------------------+
+|    NULL |              0 | !!!!                                                                                                         
+                           |
+|    NULL |              0 | !!!!!                                                                                                        
+                           |
+|    NULL |              0 | !!!!!!!!!!!!!!!!!!!                                                                                          
+                           |
+|    NULL |              0 | !!!!!!!!!!!!&&&&&&&&&&&********((_)))))F/W///CHRYSLER/FUCKING/FUCKING/FUCKING/I_HATE_THE_QUEEN!!!/I_AM_HORRID
+_HENRY/Chrysler_Cirrus/php |
+|    NULL |              0 | !!!!!Hephaestos_IS_A_FUCKING_WHINY_GUY!!!!!!                                                                 
+                           |
+|    NULL |              0 | !!!!1111oneoneone                                                                                            
+                           |
+|    NULL |              0 | !!!!???????                                                                                                  
+                           |
+|    NULL |              0 | !!!!YOU_ARE_A_COCKSUCKING_WHINY_GREASER!!!!                                                                  
+                           |
+|    NULL |              0 | !!!1                                                                                                         
+                           |
+|    NULL |              0 | !!!BESQUERKAN!!!                                                                                             
+                           |
++---------+----------------+--------------------------------------------------------------------------------------------------------------
+---------------------------+
+10 rows in set (1 hour 23 min 28.23 sec)
+*/

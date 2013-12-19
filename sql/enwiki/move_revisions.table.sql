@@ -11,7 +11,7 @@ SELECT
     rev_comment
 FROM revision
 INNER JOIN page ON rev_page = page_id
-WHERE rev_comment RLIKE 'moved \\[\\[([^\]]+)\\]\\] to \\[\\[([^\]]+)\\]\\]:.*'
+WHERE rev_comment RLIKE '.*moved .*\\[\\[([^\]]+)\\]\\] to \\[\\[([^\]]+)\\]\\].*:.*'
 UNION
 SELECT
     ar_rev_id AS rev_id,
@@ -23,6 +23,6 @@ SELECT
     ar_timestamp AS rev_timestamp,
     ar_comment AS rev_comment
 FROM archive
-WHERE ar_comment RLIKE 'moved \\[\\[([^\]]+)\\]\\] to \\[\\[([^\]]+)\\]\\]:.*';
+WHERE ar_comment RLIKE '.*moved .*\\[\\[([^\]]+)\\]\\] to \\[\\[([^\]]+)\\]\\].*:.*';
 CREATE INDEX page_idx ON halfak.nov13_move_revision (page_id, page_namespace, page_title);
 SELECT NOW() AS "generated", COUNT(*) FROM halfak.nov13_move_revision;

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS halfak.nov13_allwiki_page_status;
-CREATE TABLE halfak.nov13_allwiki_page_status (
+DROP TABLE IF EXISTS halfak.nov13_otherwiki_page_status;
+CREATE TABLE halfak.nov13_otherwiki_page_status (
     wiki VARCHAR(255),
     page_id INT, /* Page identifier (if not archived) */
     page_namespace INT,
@@ -15,5 +15,5 @@ CREATE TABLE halfak.nov13_allwiki_page_status (
     creator_action VARBINARY(255), /* log_action for relevant account creations */
     creator_registration VARBINARY(14) /* registration date of creator (or NULL for anons) */
 );
-CREATE INDEX wiki_idx ON halfak.nov13_allwiki_page_status (wiki);
-SELECT NOW() AS generated, COUNT(*) FROM halfak.nov13_allwiki_page_status;
+CREATE INDEX wiki_idx ON halfak.nov13_otherwiki_page_status (wiki);
+SELECT NOW() AS generated, COUNT(*) FROM halfak.nov13_otherwiki_page_status;
