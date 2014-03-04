@@ -1,6 +1,6 @@
-source("loader/enwiki/monthly_article_page_status.R")
+source("loader/dewiki/monthly_article_page_status.R")
 
-monthly_status = load_monthly_article_page_status.enwiki(reload=T)
+monthly_status = load_monthly_article_page_status.dewiki(reload=T)
 monthly_status$articles_unpublished_quickly = sapply(
 	monthly_status$articles_unpublished_quickly,
 	function(x){
@@ -31,7 +31,7 @@ monthly_status$creator_tenure = factor(
 	c('-day', 'day-week', 'week-month', 'month-')
 )
 
-svg("article_pages/plots/exploration/survival_prop.smoother.by_original_namespace_and_tenure.svg",
+svg("dewiki_aps/plots/exploration/survival_prop.smoother.by_original_namespace_and_tenure.svg",
 	height=5,
 	width=13)
 ggplot(
@@ -39,11 +39,8 @@ ggplot(
 		articles_published >= 25 & 
 		creator_type == "self-created" & 
 		!is.na(creator_tenure) & 
-		month_published > "2008-01-01" & (
-			original_namespace == 0 | 
-			original_namespace == 2 | 
-			original_namespace == 5 
-		),
+		month_published > "2008-01-01" & 
+		(original_namespace == 0 | original_namespace == 2) ,
 	],
 	aes(
 		x=month_published,
@@ -67,18 +64,15 @@ theme(
 )
 dev.off()
 
-svg("article_pages/plots/exploration/survival_prop.by_original_namespace_and_tenure.2013-10-01.svg",
+svg("dewiki_aps/plots/exploration/survival_prop.by_original_namespace_and_tenure.2013-10-01.svg",
 	height=5,
 	width=13)
 ggplot(
 	monthly_status[
+		articles_published >= 25 & 
 		creator_type == "self-created" & 
 		!is.na(creator_tenure) & 
-		month_published == "2013-10-01" & (
-			original_namespace == 0 | 
-			original_namespace == 2 | 
-			original_namespace == 5 
-		),
+		month_published == "2013-10-01",
 	],
 	aes(
 		x=factor(creator_tenure, levels=c("-day", "day-week", "week-month", "month-")),
@@ -106,18 +100,15 @@ theme_bw() +
 theme(legend.position="top", legend.direction="horizontal")
 dev.off()
 
-svg("article_pages/plots/exploration/unique_authors.by_original_namespace_and_tenure.2013-10-01.svg",
+svg("dewiki_aps/plots/exploration/unique_authors.by_original_namespace_and_tenure.2013-10-01.svg",
 	height=5,
 	width=13)
 ggplot(
 	monthly_status[
+		articles_published >= 25 & 
 		creator_type == "self-created" & 
 		!is.na(creator_tenure) & 
-		month_published == "2013-10-01" & (
-			original_namespace == 0 | 
-			original_namespace == 2 | 
-			original_namespace == 5 
-		),
+		month_published == "2013-10-01",
 	],
 	aes(
 		x=factor(creator_tenure, levels=c("-day", "day-week", "week-month", "month-")),
@@ -138,18 +129,15 @@ theme(legend.position="top", legend.direction="horizontal")
 dev.off()
 
 
-svg("article_pages/plots/exploration/articles_published.by_original_namespace_and_tenure.2013-10-01.svg",
+svg("dewiki_aps/plots/exploration/articles_published.by_original_namespace_and_tenure.2013-10-01.svg",
 	height=5,
 	width=13)
 ggplot(
 	monthly_status[
+		articles_published >= 25 & 
 		creator_type == "self-created" & 
 		!is.na(creator_tenure) & 
-		month_published == "2013-10-01" & (
-			original_namespace == 0 | 
-			original_namespace == 2 | 
-			original_namespace == 5 
-		),
+		month_published == "2013-10-01",
 	],
 	aes(
 		x=factor(creator_tenure, levels=c("-day", "day-week", "week-month", "month-")),
@@ -163,10 +151,9 @@ geom_bar(
 	color="#000000"
 ) + 
 scale_fill_discrete("Original namespace") +
-scale_y_continuous("Authors") + 
+scale_y_continuous("Articles published") + 
 scale_x_discrete("Author tenure") + 
 theme_bw() + 
 theme(legend.position="top", legend.direction="horizontal")
 dev.off()
-
 

@@ -3,8 +3,6 @@ from menagerie.formatting import tsv
 
 from .util import parse_page_name
 
-MOVE_COMMENT_RE = re.compile(r"^moved \[\[([^\]]+)\]\] to \[\[([^\]]+)\]\]:(.*)")
-
 def utf8_replace(val):
 	return unicode(val, "utf8", "replace")
 
@@ -17,6 +15,11 @@ def main():
 	parser = argparse.ArgumentParser(
 		description="Extracts 'from' and 'to' from page move revisions.",
 		conflict_handler="resolve"
+	)
+	parser.add_argument(
+		'move_re', 
+		help="The pattern to use to extract the move info",
+		type=lambda raw: re.compile(unicode(raw, 'utf8'))
 	)
 	parser.add_argument(
 		'--move_revisions', 
@@ -33,12 +36,12 @@ def main():
 	
 	args = parser.parse_args()
 	
-	run(args.move_revisions, args.lang)
+	run(args.move_revisions, args.lang, args.move_re)
 	
 	
 
 
-def run(revisions, lang):
+def run(revisions, lang, move_re):
 	
 	writer = tsv.Writer(
 		sys.stdout
@@ -61,15 +64,15 @@ def run(revisions, lang):
 	
 	for rev in revisions:
 		
-		match = MOVE_COMMENT_RE.match(rev.rev_comment)
+		match = move_re.match(rev.rev_comment)
 		
 		if match == None:
 			errors += 1
 			sys.stderr.write("Could not extract move from: " + rev.rev_comment + "\n")
 		else:
-			from_ns, from_title = parse_page_name(match.group(1), lang)
-			to_ns, to_title = parse_page_name(match.group(2), lang)
-			comment = match.group(3)
+			from_ns, from_title = parse_page_name(match.group("from"), lang)
+			to_ns, to_title = parse_page_name(match.group("to"), lang)
+			comment = match.group("comment")
 			
 			writer.write(
 				[

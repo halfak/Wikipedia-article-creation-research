@@ -63,6 +63,19 @@ geo.se.upper.plus.one = function(x){
 	geo.se.upper(x+1)-1
 }
 
+ifor = function(x, ifval, orval){
+	sapply(
+		x,
+		function(xval){
+			if(xval){
+				ifval
+			}else{
+				orval
+			}
+		}
+	)
+}
+
 clean.monthly_creations = function(dt){
 	dt$month_created = as.Date(dt$month_created)
 	dt$account_creation = sapply(
@@ -102,4 +115,22 @@ clean.monthly_creations = function(dt){
 	dt
 }
 
+wiki.table = function(dt){
+	cat("{|\n")
+	for(name in names(dt)){
+		cat("! ", name, "\n")
+	}
+	
+	for(row in 1:dim(dt)[1]){
+		row = c(as.matrix(dt[row]))
+		cat("|-\n")
+		cat("|", row[1])
+		for(val in row[2:length(row)]){
+			cat(" || ", val)
+		}
+		cat("\n")
+	}
+	
+	cat("|}")
+}
 

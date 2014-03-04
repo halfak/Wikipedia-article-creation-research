@@ -41,5 +41,5 @@ SELECT
             UNIX_TIMESTAMP(first_revision)
         ) < 60*60*24*30
     ) AS archived_quickly
-FROM halfak.nov13_allwiki_page_status
+FROM halfak.nov13_otherwiki_page_status
 GROUP BY 1, 2, 3, 4, 5;

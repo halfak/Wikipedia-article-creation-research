@@ -3,7 +3,10 @@ source("loader/allwiki_monthly_page_status.R")
 wiki_namespace_month = load_allwiki_monthly_page_status(reload=T)
 
 wnm.post_2008 = wiki_namespace_month[
-	month_created >= "2008-01-01",
+	month_created >= "2008-01-01" & (
+		wiki != "enwiki" | 
+		experience_type != "anon"
+	),
 	list(
 		n = sum(pages),
 		surviving.k = sum(pages) - sum(archived_quickly)

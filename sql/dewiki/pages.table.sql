@@ -1,5 +1,5 @@
-/*DROP TABLE IF EXISTS halfak.nov13_page;
-CREATE TABLE halfak.nov13_page
+/*DROP TABLE IF EXISTS staging.nov13_dewiki_page;
+CREATE TABLE staging.nov13_dewiki_page
 SELECT
     ar_page_id AS page_id,
     ar_namespace AS page_namespace,
@@ -12,7 +12,7 @@ SELECT
 FROM archive
 WHERE ar_timestamp < "20131105000000"
 GROUP BY 1,2,3;
-INSERT INTO halfak.nov13_page
+INSERT INTO staging.nov13_dewiki_page
 SELECT
     page_id,
     page_namespace,
@@ -26,8 +26,6 @@ FROM revision
 INNER JOIN page ON page_id = rev_page
 WHERE rev_timestamp < "20131105000000"
 GROUP BY 1,2,3;
-SELECT NOW() AS "generated", COUNT(*) FROM halfak.nov13_page;*/do not regenerate
-
-
+SELECT NOW() AS "generated", COUNT(*) FROM staging.nov13_dewiki_page;*/
 
 

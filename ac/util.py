@@ -13,9 +13,8 @@ for lang, namespace_ids in namespaces.NS.iteritems():
 	names = {}
 	for ns in namespace_ids.values():
 		names[normalize_title(ns.get('canonical'))] = ns['id']
-		if 'others' in ns:
-			for other_name in ns['others']:
-				names[normalize_title(other_name)] = ns['id']
+		if '*' in ns:
+			names[ns['*']] = ns['id']
 			
 		
 	

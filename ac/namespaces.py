@@ -192,5 +192,155 @@ NS = {
 			"subpages": "",
 			"canonical": "Module talk"
 		}
-	} # End English
+	}, # End English
+	'de': {
+		"-2": {
+			"id": -2,
+			"case": "first-letter",
+			"*": "Medium",
+			"canonical": "Media"
+		},
+		"-1": {
+			"id": -1,
+			"case": "first-letter",
+			"*": "Spezial",
+			"canonical": "Special"
+		},
+		"0": {
+			"id": 0,
+			"case": "first-letter",
+			"*": "",
+			"content": ""
+		},
+		"1": {
+			"id": 1,
+			"case": "first-letter",
+			"*": "Diskussion",
+			"subpages": "",
+			"canonical": "Talk"
+		},
+		"2": {
+			"id": 2,
+			"case": "first-letter",
+			"*": "Benutzer",
+			"subpages": "",
+			"canonical": "User"
+		},
+		"3": {
+			"id": 3,
+			"case": "first-letter",
+			"*": "Benutzer Diskussion",
+			"subpages": "",
+			"canonical": "User talk"
+		},
+		"4": {
+			"id": 4,
+			"case": "first-letter",
+			"*": "Wikipedia",
+			"subpages": "",
+			"canonical": "Project"
+		},
+		"5": {
+			"id": 5,
+			"case": "first-letter",
+			"*": "Wikipedia Diskussion",
+			"subpages": "",
+			"canonical": "Project talk"
+		},
+		"6": {
+			"id": 6,
+			"case": "first-letter",
+			"*": "Datei",
+			"canonical": "File"
+		},
+		"7": {
+			"id": 7,
+			"case": "first-letter",
+			"*": "Datei Diskussion",
+			"subpages": "",
+			"canonical": "File talk"
+		},
+		"8": {
+			"id": 8,
+			"case": "first-letter",
+			"*": "MediaWiki",
+			"canonical": "MediaWiki"
+		},
+		"9": {
+			"id": 9,
+			"case": "first-letter",
+			"*": "MediaWiki Diskussion",
+			"subpages": "",
+			"canonical": "MediaWiki talk"
+		},
+		"10": {
+			"id": 10,
+			"case": "first-letter",
+			"*": "Vorlage",
+			"canonical": "Template"
+		},
+		"11": {
+			"id": 11,
+			"case": "first-letter",
+			"*": "Vorlage Diskussion",
+			"subpages": "",
+			"canonical": "Template talk"
+		},
+		"12": {
+			"id": 12,
+			"case": "first-letter",
+			"*": "Hilfe",
+			"subpages": "",
+			"canonical": "Help"
+		},
+		"13": {
+			"id": 13,
+			"case": "first-letter",
+			"*": "Hilfe Diskussion",
+			"subpages": "",
+			"canonical": "Help talk"
+		},
+		"14": {
+			"id": 14,
+			"case": "first-letter",
+			"*": "Kategorie",
+			"subpages": "",
+			"canonical": "Category"
+		},
+		"15": {
+			"id": 15,
+			"case": "first-letter",
+			"*": "Kategorie Diskussion",
+			"subpages": "",
+			"canonical": "Category talk"
+		},
+		"100": {
+			"id": 100,
+			"case": "first-letter",
+			"*": "Portal",
+			"subpages": "",
+			"canonical": "Portal"
+		},
+		"101": {
+			"id": 101,
+			"case": "first-letter",
+			"*": "Portal Diskussion",
+			"subpages": "",
+			"canonical": "Portal Diskussion"
+		},
+		"828": {
+			"id": 828,
+			"case": "first-letter",
+			"*": "Modul",
+			"subpages": "",
+			"canonical": "Module"
+		},
+		"829": {
+			"id": 829,
+			"case": "first-letter",
+			"*": "Modul Diskussion",
+			"subpages": "",
+			"canonical": "Module talk"
+		}
+	}, # Eng German
 }

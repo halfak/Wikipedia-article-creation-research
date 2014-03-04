@@ -67,7 +67,7 @@ wmn.post_2008.normalized.with_total$prop = with(
 )
 wmn.post_2008.normalized.with_total$experience_type = factor(
 	wmn.post_2008.normalized.with_total$experience_type,
-	levels=c("anon", "autocreate", "day", "week", "month", "oldtimer")
+	levels=c("anon", "autocreate", "-day", "day-week", "week-month", "month-")
 )
 
 svg("allwiki/plots/page_creations/monthly_article_creations.by_experience_type.enwiki.svg",
@@ -179,16 +179,16 @@ scale_x_date("Month created")
 dev.off()
 
 ################################################################################
-#     Just last year
+#     Just last month
 ################################################################################
 
-wnm.last_year.articles = wiki_namespace_month[
-	month_created > "2012-10-01" & 
-	month_created <= "2013-10-01" & 
+wnm.last_month.articles = wiki_namespace_month[
+	month_created == "2013-10-01" & 
 	page_namespace == 0 & 
 	(wiki != "enwiki" | experience_type != "anon"),
 	list(
 		all = sum(pages),
+		creators = sum(page_creators),
 		surviving = sum(pages) - sum(archived_quickly),
 		archived = sum(archived_quickly),
 		survival.prop = round((sum(pages) - sum(archived_quickly)) / sum(pages), 3)
@@ -198,10 +198,10 @@ wnm.last_year.articles = wiki_namespace_month[
 		experience_type
 	)
 ]
-wnm.last_year.articles[order(wmn.last_year.articles$wiki, wmn.last_year.articles$experience_type),]
+wnm.last_month.articles[order(wnm.last_month.articles$wiki, wnm.last_month.articles$experience_type),]
 
-wnm.last_year.articles.normalized = with(
-	wnm.last_year.articles,
+wnm.last_month.articles.normalized = with(
+	wnm.last_month.articles,
 	rbind(
 		data.table(
 			wiki,
@@ -229,11 +229,11 @@ wnm.last_year.articles.normalized = with(
 
 svg("allwiki/plots/page_creations/article_survival.by_experience_type.allwikis.svg",
 	height=3,
-	width=7)
+	width=12)
 ggplot(
-	wnm.last_year.articles.normalized[group == "surviving",],
+	wnm.last_month.articles.normalized[group == "surviving" & experience_type != "autocreate",],
 	aes(
-		x=factor(experience_type, levels=c("autocreate", "anon", "day", "week", "month", "oldtimer")),
+		x=factor(experience_type, levels=c("anon", "-day", "day-week", "week-month", "month-")),
 		y=prop
 	)
 ) + 
@@ -246,10 +246,33 @@ scale_x_discrete("Experience level") +
 scale_y_continuous("Surviving proportion") + 
 theme_bw() +
 theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
-facet_wrap(~ wiki, ncol=4)
+facet_wrap(~ wiki, ncol=7)
 dev.off()
 
-wnm.last_year.articles.totals = wnm.last_year.articles[,
+
+svg("allwiki/plots/page_creations/article_survival.by_experience_type.allwikis.svg",
+	height=3,
+	width=12)
+ggplot(
+	wnm.last_month.articles.normalized[group == "surviving" & experience_type != "autocreate",],
+	aes(
+		x=factor(experience_type, levels=c("anon", "-day", "day-week", "week-month", "month-")),
+		y=prop
+	)
+) + 
+geom_bar(
+	stat="identity",
+	color="black",
+	fill="#CCCCCC"
+) + 
+scale_x_discrete("Experience level") + 
+scale_y_continuous("Surviving proportion") + 
+theme_bw() +
+theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+facet_wrap(~ wiki, ncol=7)
+dev.off()
+
+wnm.last_month.articles.totals = wnm.last_month.articles[,
 	list(
 		total=sum(all)
 	),
@@ -257,16 +280,16 @@ wnm.last_year.articles.totals = wnm.last_year.articles[,
 		wiki
 	)
 ]
-wnm.last_year.articles.with_totals = merge(
-	wnm.last_year.articles,
-	wnm.last_year.articles.totals,
+wnm.last_month.articles.with_totals = merge(
+	wnm.last_month.articles,
+	wnm.last_month.articles.totals,
 	by="wiki"
 )
-wnm.last_year.articles.with_totals$creation.prop = with(
-	wnm.last_year.articles.with_totals,
+wnm.last_month.articles.with_totals$creation.prop = with(
+	wnm.last_month.articles.with_totals,
 	round(all/total, 3)
 )
-wnm.last_year.articles.with_totals[
+wnm.last_month.articles.with_totals[
 	order(wiki, experience_type),
 	list(
 		wiki, 
@@ -280,11 +303,11 @@ wnm.last_year.articles.with_totals[
 
 svg("allwiki/plots/page_creations/article_creation_prop.by_experience_type.allwikis.svg",
 	height=3,
-	width=7)
+	width=12)
 ggplot(
-	wnm.last_year.articles.with_totals,
+	wnm.last_month.articles.with_totals[experience_type != "autocreate",],
 	aes(
-		x=factor(experience_type, levels=c("autocreate", "anon", "day", "week", "month", "oldtimer")),
+		x=factor(experience_type, levels=c("anon", "-day", "day-week", "week-month", "month-")),
 		y=creation.prop
 	)
 ) + 
@@ -297,5 +320,27 @@ scale_x_discrete("Experience level") +
 scale_y_continuous("Article creation proportion") + 
 theme_bw() +
 theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
-facet_wrap(~ wiki, ncol=4)
+facet_wrap(~ wiki, ncol=7)
+dev.off()
+
+svg("allwiki/plots/page_creations/article_creators.by_experience_type.allwikis.svg",
+	height=3,
+	width=12)
+ggplot(
+	wnm.last_month.articles.with_totals[experience_type != "autocreate",],
+	aes(
+		x=factor(experience_type, levels=c("anon", "-day", "day-week", "week-month", "month-")),
+		y=creators
+	)
+) + 
+geom_bar(
+	stat="identity",
+	color="black",
+	fill="#CCCCCC"
+) + 
+scale_x_discrete("Experience level") + 
+scale_y_continuous("Article creation proportion") + 
+theme_bw() +
+theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+facet_wrap(~ wiki, ncol=7)
 dev.off()

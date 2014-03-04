@@ -51,4 +51,4 @@ LEFT JOIN logging AS direct_create ON
 LEFT JOIN logging AS indirect_create ON
     indirect_create.log_type = "newusers" AND
     indirect_create.log_action IN ("byemail", "create2") AND
-    REPLACE(creator.user_name, " ", "_") = indirect_create.log_title;
+    indirect_create.log_title = REPLACE(creator.user_name, " ", "_");
